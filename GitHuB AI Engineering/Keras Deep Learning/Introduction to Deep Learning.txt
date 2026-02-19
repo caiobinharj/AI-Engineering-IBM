@@ -1,0 +1,49 @@
+*Intro
+- Redes neurais: modelos de machine learning inspirados pelo cérebro humano que consiste de neurônios interconectados que processam dados e aprender a partir de tal.
+- Deep Learning: subconjunto de machine learning que use redes neurais profundas
+- Redes Neurais Recorrentes (RNN): tipo de rede neural designada para sequências de dados, tornando-as ideais para modelagem de linguagem e predição em time series
+- Redes Neurais convolucionais (CNN): classe de rede neural profunda usada para analisar dados visuais, como imagens e vídeos
+- Keras: API de rede neural escrita em python, permite experimentação veloz com redes neurais profundas.
+- Aplicações: restauração de cor, sync entre áudio e vídeo, auomatic handwriting generation, automatic machine translation, sound generation, self-driving cars, chatbots.
+- Neurônio/Perceptron: compara a soma de entradas com peso com um valor limite. O percéptron é o bloco de construção das redes neurais.
+
+*Rede Neural Artificial: sistema -> input layer, output layer, hidden layers (pode ter um ou mais, cada um composto por um ou mais perceptrons). 
+- a é o output do neurônio, z é a combinação linear dos inputs dentro do neurônio, b é o bias, x os inputs, w os pesos.
+- A função sigmoide (1/(1+e^-x) ajuda com valores muito grandes de participação de neurônios para transformá-los em algo entre 0 e 1.
+- Forward Propagation: o neurônio faz a soma das entradas em que cada entrada tem um peso que o multiplica além de ter um bias que soma no total. O output do neurônio é 0 ou 1.
+- Função de Ativação: decide se um neurônio deve ser ou não ativado. Uma Rede neural sem função de ativação é uma Regressão Linear
+
+*Gradiente Descendente: usado para minimizar a função custo por alterar os valores dos pesos e bias a cada iteração. Quanto maior o learning rate, maior o passo na variação.
+*Backpropagation: é a maneira ideal de cálculo do erro para facilitar o gradiente descendente a achar a melhor opção. É o uso de Regra da Cadeira p/ relacionar função de erro com o peso.
+*Problema Vanishing Gradient: como valores retornados pela função sigmoide são entre 0 e 1, no backpropagation, as multiplicações com números menores que 1 fazem com que os gradientes fiquem menores, o que traduz num aprendizado mais lento para neurônios mais próximos da layer de input -> resultado: treino lentíssimo e acurácia de precisão comprometida
+*Solução -> Outras funções de ativação (Leaky ReLU function, Linear function, Binary step function)
+- Sigmoid function: valores intensos positivos geram 1, intensos negativos geram 0. 
+- Hyperbolic tangente function (tanh): é parecido om sigmoide porém com a origem simétrica (mesmo positivo e negativo). Também leva ao vanishing gradient
+- Rectified Linear unit function (ReLU): é a mais usada. a vantagem é que não aciona todos os neurônios simultaneamente. Valores negativos geram 0. para positivos é f(x)=x	
+- Softmax function: uma versão de sigmoide para facilitar classificação e dimensionaliza números para porcentagem. É só para output layer. Também pode causar vanishing gradient
+- Conclusão: começar com ReLU mas mudar para outras caso a performance não esteja boa.
+
+*bibliotecas DL e Keras
+- TF é mais famoso e antigo; PyTorch é o mais novo e roda na GPU ent eh muito rápido. Keras é o melhor para aprender, é fácil e rápido de codar porém tem menos controle. É rodado no TF
+- Keras tem 2 modelos de redes neurais: sequencial (maior parte das vezes) e modelo de classe da API funcional
+- Processo para Regressão em Keras: model = Sequential(); n_Cols= concrete data.shape[1]; model.add(Dense(5, activation = 'relu', input_shape=(n_cols,))). Repete-se esse código para cada coluna de neurônios -> model.compile(optimizer='adam', loss='mean_squared_error' e depois treina com model.fit(predictors, target). prediction = model.predict(test_data)
+- Processo para Classificação em Keras: o número de outputs ao invés de 1 agora é o número de classificações possíveis. Mesmo processo, só que agora o target=to_categorical(target) e no último hidden layer usar softmax ao invés de relu e o model.compile(optimizer='adam', loss='classification_crossentropy', metrics=['accuracy']) e model.predict leva número de epochs.
+
+*Modelos Deep Learning
+- rede neural rasa: com só uma ou duas hidden layers e recebe só vetores como input. profunda: 3 ou mais e pode receber dados crus como entrada (imagens e texto)
+- boom: avanços com a função de ativação relu, disponibilidade alta de dados (ML funciona até certo ponto), agora GPUs rodam tremendos volumes de dados muito mais rapidamente.
+- Convolucionais: específicas para imagens, assume que os dados são imagens o que permite a adição de propriedades que reduz parâmetros e acelera forward propagation. tem a composição nm1 ou nm3 (para rgb) A camada de convolução pega uma parte da matriz, soma as multiplicações dessa com outra de 0 e 1 e guarda numa nova matriz. 
+- Ao invés de multiplicar por 0 ou 1 e somar, o max pooling pega o maior número do grupo, average pooling a média
+- Reduzir rgb para só 1 vetor com nm1, fica com um número muito grande de params, tornando-se caro computacionalmente. Diminuir os parâmetros contribui ao não overfitting.
+- Fully-Connected Layer: reduz-se o output da ultima camada convolucional, conecta cada nó para cada um dos nós da próxima camada, o output é um vetor n dimensional.
+- RNNs: Rede neural normal só que recebe o output do neurônio anterior da mesma camada como parâmetro.
+- LSTM (tipo de RNN): ajuda a gerar imagens, escrita à mão, captação automática de imagens e descrição de vídeos.
+- Transformers: rede neural que revolucionou PLN. Usadas para criar LLMs. DIferente das anteriores, é boa em captar dependência de longo alcance nos dados. Muito usados em tradução de máquina, resumo de texto, responder perguntas, geração texto-imagem. GPT e BERT são transformers famosos.
+- A inovação é o mecanismo de atenção, que permite pesar a importância em partes diferentes de inputs. As dependências de longo alcance são captadas eficientemente.
+- Self-Attention: usado para processar dados de texto e a primeira parte divide-se em três partes encaixadas num vetor -> query(Q), key(K), value(V). A segunda são os Attention Scores que tem os query token vector comparado aos key vectors de outros tokens, gerando os attention scores que indicam a relevância de cada token para o token atual em questão. Finalmente, No Weighted Sum, os Attention Scores são normalizados.
+- Cross Attention Mechanism para text to image: embeddings contextualizados são criados pela frase toda, são passados pelo encoder do transformer para gerar uma sequência de queries representando o texto e o modelo de transformer para imagens usa o cross attention para geração de imagens baseados nas queries, daí o modelo gera a imagem usando auto-regressiva.
+- Diferente de RNNs, transformers podem ser paralelizados, acelerando seu treino. RNNs processam dados sequencialmente, limitando a paralelização. RNNs sofrem com contexto de longa distância e gradientes que somem. Os transformers tem sucesso nisso
+- AutoEncoders: é um modelo não supervisionado de deep learning. É um algoritmo de compressão de dados, em que as funções de compressão e descompressão de dados são aprendidas automaticamente	 pelos dados. São data-specific (apenas comprime dados similares aos em que foram treinados). Aplicações são retirada de ruídos e redução de dimensionalidade. 
+- Restricted Boltzmann  machines (RBMs): autoencoder popular que tem aplicações como ajeitar sets desbalanceados, estima valores faltantes e extração automática de features
+- Modelos Pré-Treinados de Redes Neurais em grandes datasets: usado como extratores de features para novas tarefas sem treinamento adicional como clusterização, visualização, alimentação para modelos mais simples. Faz com que treino adicional seja desnecessário, uso eficiente de features aprendidas, aplicável para recursos limitados
+- Fine Tuning: permite o ajuste de pesos pré-treinados para atender novos dados, que leva a melhorias significativas em performance, que permite o aprendizado por transferência para se ajustar a novas tarefas relacionadas, envolve o descongelamento de camadas do topo da base do modelo para a extração de features
